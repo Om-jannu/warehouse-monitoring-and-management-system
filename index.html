@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VOT | Warehouse Monitoring System</title>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <meta name="description"
         content="This project is designed to detect environmental changes that could impact the quality of the food grains stored in a warehouse. The system uses sensors to measure the temperature, humidity, and alcohol content, including NH3 and CO2 levels within the warehouse. The data is collected by a Node MCU ESP8266 module, which sends it to a server for storage and analysis.">
     <link rel="stylesheet" href="style.css">
@@ -16,6 +17,7 @@
 </head>
 
 <body>
+    <button onclick="signIn()">Sign in with Google</button>
     <div class="center">
         <div class="right">
             <div class="heading">
@@ -46,7 +48,7 @@
                         </div>
                     </div>
                     <iframe width="100%" height="100%" id="window_iframe_12266084" class="window-iframe"
-                        src="https://thingspeak.com/channels/2102593/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&timescale=10&title=Real+Time+Temperature+Graph&type=line"></iframe>
+                        src="https://thingspeak.com/channels/2102593/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&timescale=10&title=Real+Time+Temperature+Graph&type=line&yaxismax=40"></iframe>
                 </div>
                 <div class="graph">
                     <div class="stock">
@@ -70,7 +72,7 @@
                         </div>
                     </div>
                     <iframe width="100%" height="100%" id="window_iframe_12266085" class="window-iframe"
-                        src="https://thingspeak.com/channels/2102593/charts/3?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&timescale=10&type=line"></iframe>
+                        src="https://thingspeak.com/channels/2102593/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&timescale=10&title=Real+Time+Humidity+Graph&type=line"></iframe>
                 </div>
                 <div class="graph">
                     <div class="stock">
@@ -94,7 +96,7 @@
                         </div>
                     </div>
                     <iframe width="100%" height="100%" id="window_iframe_12266581" class="window-iframe"
-                        src="https://thingspeak.com/channels/2102593/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&timescale=10&title=Real+Time+Humidity+Graph&type=line"></iframe>
+                        src="https://thingspeak.com/channels/2102593/charts/3?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&timescale=10&type=line"></iframe>
                 </div>
                 <div class="graph">
                     <div class="stock">
@@ -111,6 +113,7 @@
         </div>
     </div>
     <script src="https://kit.fontawesome.com/dee439f8c1.js" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>

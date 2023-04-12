@@ -1,0 +1,23 @@
+{
+  "name": "warehouse-monitoring-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Om-jannu/warehouse-monitoring-system-web.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Om-jannu/warehouse-monitoring-system-web/issues"
+  },
+  "homepage": "https://github.com/Om-jannu/warehouse-monitoring-system-web#readme",
+  "dependencies": {
+    "googleapis": "^117.0.0"
+  }
+}
