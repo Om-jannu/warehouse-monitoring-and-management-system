@@ -1,19 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:invsync/screens/forgotpass.dart';
-import 'package:invsync/screens/homepage.dart';
+import 'package:invsync/screens/loginPage.dart';
 import 'package:invsync/screens/signup.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart' as http;
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class ForgotPassword extends StatelessWidget {
+  const ForgotPassword({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +39,7 @@ class LoginPage extends StatelessWidget {
                                   color: Colors.black87.withOpacity(0.7)),
                               children: <TextSpan>[
                                 TextSpan(
-                                    text: " Sign up",
+                                    text: " Signup",
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
                                         Navigator.push(
@@ -83,7 +77,7 @@ class LoginPage extends StatelessWidget {
                               color: Colors.black87.withOpacity(0.7)),
                           children: <TextSpan>[
                             TextSpan(
-                                text: " Sign up",
+                                text: " Signup",
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     Navigator.push(
@@ -139,27 +133,32 @@ class _FormContent extends StatefulWidget {
 }
 
 class __FormContentState extends State<_FormContent> {
-  Future<User?> signIn({
+  Future<User?> resetPassword({
     required String email,
-    required String password,
     required BuildContext context,
   }) async {
     User? user;
-    FirebaseAuth auth = FirebaseAuth.instance;
     try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      user = userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      print("User Not found ");
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+
       Fluttertoast.showToast(
-          msg: "Invalid User credential",
+          msg: "Password Reset Link sent",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          fontSize: 16.0);
+
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => LoginPage()));
+    } on FirebaseAuthException catch (e) {
+      print("Some issues.. try after sometime ");
+      Fluttertoast.showToast(
+          msg: e.message!,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,
           fontSize: 16.0);
     }
-    return user;
   }
 
   bool isLoading = false;
@@ -187,9 +186,14 @@ class __FormContentState extends State<_FormContent> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const _Logo(),
-            const SizedBox(
-              height: 8,
+            const Align(
+              alignment: Alignment.center,
+              child: Text(
+                "Reset your password",
+                style: TextStyle(fontSize: 28),
+              ),
             ),
+            _gap(),
             TextFormField(
               controller: emailController,
               style: const TextStyle(fontSize: 16),
@@ -209,44 +213,13 @@ class __FormContentState extends State<_FormContent> {
               },
               decoration: const InputDecoration(
                 labelText: 'Email',
-                hintText: 'Enter your email address',
-                prefixIcon: Icon(Icons.mail),
+                hintText: 'Enter your registered email address',
+                prefixIcon: Icon(Icons.call),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8))),
               ),
             ),
             _gap(),
-            TextFormField(
-              controller: passwordController,
-              style: const TextStyle(fontSize: 16),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-
-                if (value.length < 6) {
-                  return 'Password must be at least 6 characters';
-                }
-                return null;
-              },
-              obscureText: !_isPasswordVisible,
-              decoration: InputDecoration(
-                  labelText: 'Password',
-                  hintText: 'Enter your password',
-                  prefixIcon: const Icon(Icons.lock_outline_rounded),
-                  border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
-                  suffixIcon: IconButton(
-                    icon: Icon(_isPasswordVisible
-                        ? Icons.visibility_off
-                        : Icons.visibility),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  )),
-            ),
             _gap(),
 
             // _gap(),
@@ -264,7 +237,7 @@ class __FormContentState extends State<_FormContent> {
                   child: const Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Text(
-                      'Sign in',
+                      'Reset password',
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -273,47 +246,15 @@ class __FormContentState extends State<_FormContent> {
                   ),
                   onPressed: () async {
                     if (_formKey.currentState?.validate() ?? false) {
-                      User? user = await signIn(
-                          email: emailController.text,
-                          password: passwordController.text,
-                          context: context);
-
-                      if (user != null) {
-                        // ignore: use_build_context_synchronously
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => const HomePage()));
-                      }
+                      print("Reset password  clicked");
+                      await resetPassword(
+                          email: emailController.text, context: context);
                     }
                   },
                 ),
               ),
             ),
             _gap(),
-            RichText(
-              text: TextSpan(
-                text: 'Forgot your login details? ',
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87.withOpacity(0.7)),
-                children: <TextSpan>[
-                  TextSpan(
-                      text: "Get help signing in",
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const ForgotPassword()), // Navigate to MyNewPage
-                          );
-                        },
-                      style: const TextStyle(
-                          color: Colors.deepPurple,
-                          fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
           ],
         ),
       ),

@@ -8,12 +8,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:invsync/screens/forgotpass.dart';
 import 'package:invsync/screens/homepage.dart';
+import 'package:invsync/screens/loginPage.dart';
 import 'package:invsync/screens/signup.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class SignUp extends StatelessWidget {
+  const SignUp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,21 +39,21 @@ class LoginPage extends StatelessWidget {
                           padding: const EdgeInsets.only(bottom: 14, top: 14),
                           child: RichText(
                             text: TextSpan(
-                              text: "Don't have an account?",
+                              text: "Already have an account?",
                               style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.black87.withOpacity(0.7)),
                               children: <TextSpan>[
                                 TextSpan(
-                                    text: " Sign up",
+                                    text: " Login",
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const SignUp()), // Navigate to MyNewPage
+                                                  const LoginPage()), // Navigate to MyNewPage
                                         );
                                       },
                                     style: const TextStyle(
@@ -76,21 +77,21 @@ class LoginPage extends StatelessWidget {
                       ),
                       RichText(
                         text: TextSpan(
-                          text: "Don't have an account?",
+                          text: "Already have an account?",
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
                               color: Colors.black87.withOpacity(0.7)),
                           children: <TextSpan>[
                             TextSpan(
-                                text: " Sign up",
+                                text: " Login",
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const SignUp()), // Navigate to MyNewPage
+                                              const LoginPage()), // Navigate to MyNewPage
                                     );
                                   },
                                 style: const TextStyle(
@@ -139,24 +140,23 @@ class _FormContent extends StatefulWidget {
 }
 
 class __FormContentState extends State<_FormContent> {
-  Future<User?> signIn({
+  Future<User?> signUp({
     required String email,
     required String password,
     required BuildContext context,
   }) async {
     User? user;
-    FirebaseAuth auth = FirebaseAuth.instance;
     try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(
-          email: email, password: password);
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
       user = userCredential.user;
     } on FirebaseAuthException catch (e) {
-      print("User Not found ");
+      print("User Not created ");
       Fluttertoast.showToast(
-          msg: "Invalid User credential",
+          msg: "Unable to create user. Try afte sometime",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 2,
+          gravity: ToastGravity.CENTER,
+          textColor: Colors.white,
           fontSize: 16.0);
     }
     return user;
@@ -187,9 +187,15 @@ class __FormContentState extends State<_FormContent> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const _Logo(),
-            const SizedBox(
-              height: 8,
+
+            const Align(
+              alignment: Alignment.center,
+              child: Text(
+                "Get started with us!",
+                style: TextStyle(fontSize: 28),
+              ),
             ),
+            _gap(),
             TextFormField(
               controller: emailController,
               style: const TextStyle(fontSize: 16),
@@ -209,7 +215,7 @@ class __FormContentState extends State<_FormContent> {
               },
               decoration: const InputDecoration(
                 labelText: 'Email',
-                hintText: 'Enter your email address',
+                hintText: 'Enter your Email address',
                 prefixIcon: Icon(Icons.mail),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -264,7 +270,7 @@ class __FormContentState extends State<_FormContent> {
                   child: const Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Text(
-                      'Sign in',
+                      'Create Account',
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -273,47 +279,25 @@ class __FormContentState extends State<_FormContent> {
                   ),
                   onPressed: () async {
                     if (_formKey.currentState?.validate() ?? false) {
-                      User? user = await signIn(
+                      User? user = await signUp(
                           email: emailController.text,
                           password: passwordController.text,
                           context: context);
 
-                      if (user != null) {
-                        // ignore: use_build_context_synchronously
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => const HomePage()));
-                      }
+                      Fluttertoast.showToast(
+                          msg: "User Created Successfully",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 2,
+                          fontSize: 16.0);
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const LoginPage()));
                     }
                   },
                 ),
               ),
             ),
             _gap(),
-            RichText(
-              text: TextSpan(
-                text: 'Forgot your login details? ',
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87.withOpacity(0.7)),
-                children: <TextSpan>[
-                  TextSpan(
-                      text: "Get help signing in",
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const ForgotPassword()), // Navigate to MyNewPage
-                          );
-                        },
-                      style: const TextStyle(
-                          color: Colors.deepPurple,
-                          fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
           ],
         ),
       ),

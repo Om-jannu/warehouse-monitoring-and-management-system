@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "478966296027",
+    "project_id": "invsync-f07e2",
+    "storage_bucket": "invsync-f07e2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478966296027:android:4787a9ad6fd64f05e28bfe",
+        "android_client_info": {
+          "package_name": "com.example.invsync"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478966296027-qc0j6sl846srbiet9t7q16dtukve3inb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.invsync",
+            "certificate_hash": "15e355c3472b5b4bfeded2fc09e068aad3fa5b82"
+          }
+        },
+        {
+          "client_id": "478966296027-je559j38n8nqqs12t2irlejpvdr5u1qu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9T30oYMPXWO5nislNRTy_Vp0clTNwrfU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478966296027-je559j38n8nqqs12t2irlejpvdr5u1qu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
