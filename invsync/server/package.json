@@ -1,0 +1,15 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "firbase server for invsync ",
+  "main": "warehouse_api.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Om, Tushar, Vendra",
+  "license": "ISC",
+  "dependencies": {
+    "firebase": "^8.2.3",
+    "moment-timezone": "^0.5.43"
+  }
+}
