@@ -32,15 +32,15 @@ class myApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        navigatorKey: navigatorKey,
-        themeMode: ThemeMode.light,
-        debugShowCheckedModeBanner: false,
-        theme: MyTheme.lightTheme(context),
-        darkTheme: MyTheme.darkTheme(context),
-        // home: HomePage(),
-        // home: MyPhone(),
-        home: isLoggedIn ? HomePage() : const LoginPage()
-        // initialRoute: isLoggedIn ? HomePage() : LoginPage();
-        );
+      navigatorKey: navigatorKey,
+      themeMode: ThemeMode.light,
+      debugShowCheckedModeBanner: false,
+      theme: MyTheme.lightTheme(context),
+      darkTheme: MyTheme.darkTheme(context),
+      // home: HomePage(),
+      // home: MyPhone(),
+      home: isLoggedIn ? HomePage() : const LoginPage(),
+      // initialRoute: isLoggedIn ? HomePage() : LoginPage();
+    );
   }
 }

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:invsync/widgets/myDrawer.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -22,9 +23,19 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     title: Title(color: Colors.black, child: const Text("InvSync")),
+    //   ),
+    //   drawer: MyDrawer(),
+    // );
     return Scaffold(
       appBar: AppBar(
-        title: Title(color: Colors.black, child: const Text("InvSync")),
+        title: Text('My App'),
+      ),
+      drawer: MyDrawer(),
+      body: Center(
+        child: Text('This is the inventory screen'),
       ),
       body: SafeArea(
         child: Container(
