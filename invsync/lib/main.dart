@@ -39,7 +39,7 @@ class myApp extends StatelessWidget {
         darkTheme: MyTheme.darkTheme(context),
         // home: HomePage(),
         // home: MyPhone(),
-        home: isLoggedIn ? const HomePage() : const LoginPage()
+        home: isLoggedIn ? HomePage() : const LoginPage()
         // initialRoute: isLoggedIn ? HomePage() : LoginPage();
         );
   }

@@ -279,9 +279,11 @@ class __FormContentState extends State<_FormContent> {
                           context: context);
 
                       if (user != null) {
+                        await Hive.box('userBox').put('isLoggedIn', true);
                         // ignore: use_build_context_synchronously
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => const HomePage()));
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                            (route) => false);
                       }
                     }
                   },
