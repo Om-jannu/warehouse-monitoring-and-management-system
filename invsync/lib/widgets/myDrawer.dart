@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:invsync/screens/inventory.dart';
+import 'package:invsync/screens/profile.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({Key? key}) : super(key: key);
@@ -10,7 +11,7 @@ class MyDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          DrawerHeader(
+          const DrawerHeader(
             decoration: BoxDecoration(
               color: Colors.blue,
             ),
@@ -23,33 +24,31 @@ class MyDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Home'),
+            leading: const Icon(Icons.home),
+            title: const Text('Home'),
             onTap: () {
-              // Update the state of the app.
-              // ...
-              // Then close the drawer.
               Navigator.pop(context);
             },
           ),
           ListTile(
-            leading: Icon(Icons.inventory),
-            title: Text('Inventory'),
+            leading: const Icon(Icons.inventory),
+            title: const Text('Inventory'),
             onTap: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => InventoryScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const InventoryScreen()),
               );
             },
           ),
           ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Settings'),
+            leading: const Icon(Icons.settings),
+            title: const Text('Settings'),
             onTap: () {
-              // Update the state of the app.
-              // ...
-              // Then close the drawer.
-              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MyProfilePage()),
+              );
             },
           ),
         ],

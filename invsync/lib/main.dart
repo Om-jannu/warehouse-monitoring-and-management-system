@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:invsync/screens/homescreen.dart';
 import 'package:invsync/screens/loginPage.dart';
 import 'package:invsync/widgets/themes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,10 +38,7 @@ class myApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: MyTheme.lightTheme(context),
       darkTheme: MyTheme.darkTheme(context),
-      // home: HomePage(),
-      // home: MyPhone(),
-      home: isLoggedIn ? HomePage() : const LoginPage(),
-      // initialRoute: isLoggedIn ? HomePage() : LoginPage();
+      home: isLoggedIn ? HomeScreen() : const LoginPage(),
     );
   }
 }
