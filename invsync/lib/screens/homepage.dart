@@ -34,9 +34,6 @@ class HomePage extends StatelessWidget {
         title: Text('My App'),
       ),
       drawer: MyDrawer(),
-      body: Center(
-        child: Text('This is the inventory screen'),
-      ),
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(20),
