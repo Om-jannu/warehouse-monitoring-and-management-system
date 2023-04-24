@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:invsync/screens/homepage.dart';
@@ -33,7 +34,7 @@ class HomeScreenState extends State<HomeScreen> {
   _getDrawerItemWidget(int pos) {
     switch (pos) {
       case 0:
-        return HomePage();
+        return const HomePage();
       case 1:
         return const InventoryScreen();
       case 2:
@@ -81,6 +82,14 @@ class HomeScreenState extends State<HomeScreen> {
       ));
     }
 
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    User? _currentUser = _auth.currentUser;
+
+    _auth.authStateChanges().listen((user) {
+      setState(() {
+        _currentUser = user;
+      });
+    });
     return Scaffold(
       appBar: AppBar(
         // here we display the title corresponding to the fragment
@@ -90,8 +99,9 @@ class HomeScreenState extends State<HomeScreen> {
       drawer: Drawer(
         child: Column(
           children: <Widget>[
-            const UserAccountsDrawerHeader(
-                accountName: Text("John Doe"), accountEmail: null),
+            UserAccountsDrawerHeader(
+                accountName: Text("John Doe"),
+                accountEmail: Text(_currentUser?.email ?? 'johndoe@gmail.com')),
             Column(children: drawerOptions)
           ],
         ),

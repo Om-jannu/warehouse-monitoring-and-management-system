@@ -1,92 +1,178 @@
 // import 'package:flutter/material.dart';
-// import 'package:invsync/models/inventoryItem.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:intl/intl.dart';
+// import 'package:flutter_slidable/flutter_slidable.dart';
+
+// class Item {
+//   final String id;
+//   final String name;
+//   final int quantity;
+//   final Timestamp lastUpdated;
+
+//   Item(this.id, this.name, this.quantity, this.lastUpdated);
+
+//   String get formattedDate {
+//     return DateFormat('MMM d, y h:mm a').format(lastUpdated.toDate());
+//   }
+
+//   Map<String, dynamic> toMap() {
+//     return {
+//       'id': id,
+//       'name': name,
+//       'quantity': quantity,
+//       'lastUpdated': lastUpdated,
+//     };
+//   }
+// }
 
 // class InventoryScreen extends StatefulWidget {
+//   const InventoryScreen({Key? key}) : super(key: key);
+
 //   @override
 //   _InventoryScreenState createState() => _InventoryScreenState();
 // }
 
 // class _InventoryScreenState extends State<InventoryScreen> {
-//   List<InventoryItem> items = [
-//       InventoryItem(id: "1", itemName: "Bananas", lastUpdated: "01/01/2022", quantity: 50),
-//       InventoryItem(id: "2", itemName: "Apples", lastUpdated: "01/01/2022", quantity: 100),
-//       InventoryItem(id: "3", itemName: "Grapes", lastUpdated: "01/01/2022", quantity: 75),
-//     ];
+//   final CollectionReference itemsRef =
+//       FirebaseFirestore.instance.collection('wareHouseItem');
 
 //   void _showAddItemDialog() {
-//     TextEditingController _quantityController = TextEditingController();
-//     // String selectedItem;
-//     String selectedItem = '';
-//     // String? selectedItem;
+//     String? name;
+//     int? quantity;
 
-//     showModalBottomSheet(
+//     showDialog(
 //       context: context,
 //       builder: (BuildContext context) {
-//         return StatefulBuilder(
-//           builder: (BuildContext context, StateSetter setState) {
-//             return Container(
-//               height: MediaQuery.of(context).size.height * 0.6,
-//               child: Column(
-//                 children: [
-//                   Padding(
-//                     padding: const EdgeInsets.all(8.0),
-//                     child: Text(
-//                       'Add Item',
-//                       style: TextStyle(fontSize: 18.0),
-//                     ),
+//         return AlertDialog(
+//           title: Text('Add Item'),
+//           content: SingleChildScrollView(
+//             child: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 TextField(
+//                   decoration: InputDecoration(
+//                     labelText: 'Name',
 //                   ),
-//                   Expanded(
-//                     child: ListView.builder(
-//                       itemCount: items.length,
-//                       itemBuilder: (context, index) {
-//                         return ListTile(
-//                           title: Text(items[index].itemName),
-//                           onTap: () {
-//                             setState(() {
-//                               selectedItem = items[index].itemName;
-//                             });
-//                           },
-//                           trailing: selectedItem == items[index].itemName
-//                               ? Icon(Icons.check)
-//                               : null,
-//                         );
-//                       },
-//                     ),
+//                   onChanged: (value) {
+//                     name = value;
+//                   },
+//                 ),
+//                 TextField(
+//                   decoration: InputDecoration(
+//                     labelText: 'Quantity',
 //                   ),
-//                   Padding(
-//                     padding: const EdgeInsets.all(8.0),
-//                     child: TextField(
-//                       controller: _quantityController,
-//                       decoration: InputDecoration(
-//                         hintText: 'Enter quantity',
-//                       ),
-//                       keyboardType: TextInputType.number,
-//                     ),
-//                   ),
-//                   ElevatedButton(
-//                     onPressed: () {
-//                       if (selectedItem != null &&
-//                           _quantityController.text.isNotEmpty) {
-//                         setState(() {
-//                           InventoryItem newItem = InventoryItem(
-//                             id: DateTime.now().toString(),
-//                             itemName: selectedItem,
-//                             lastUpdated: DateTime.now().toString(),
-//                             quantity: int.parse(_quantityController.text),
-//                           );
-//                           items.add(newItem);
-//                           selectedItem = '';
-//                           _quantityController.clear();
-//                         });
-//                         Navigator.pop(context);
-//                       }
-//                     },
-//                     child: Text('Add'),
-//                   ),
-//                 ],
+//                   keyboardType: TextInputType.number,
+//                   onChanged: (value) {
+//                     quantity = int.tryParse(value);
+//                   },
+//                 ),
+//               ],
+//             ),
+//           ),
+//           actions: [
+//             TextButton(
+//               onPressed: () {
+//                 Navigator.pop(context);
+//               },
+//               child: Text('Cancel'),
+//             ),
+//             TextButton(
+//               onPressed: () async {
+//                 if (name != null && quantity != null) {
+//                   final newItem = Item(DateTime.now().toString(), name!,
+//                       quantity!, Timestamp.now());
+//                   await itemsRef.doc(newItem.id).set(newItem.toMap());
+//                   Navigator.pop(context);
+//                 }
+//               },
+//               child: Text('Add'),
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+
+//   Future<void> _showEditItemDialog(Item item) async {
+//     final TextEditingController nameController =
+//         TextEditingController(text: item.name);
+//     final TextEditingController quantityController =
+//         TextEditingController(text: item.quantity.toString());
+
+//     await showDialog(
+//       context: context,
+//       builder: (BuildContext context) {
+//         return AlertDialog(
+//           title: Text('Edit Item'),
+//           content: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Text('Name'),
+//               TextFormField(
+//                 controller: nameController,
 //               ),
-//             );
-//           },
+//               SizedBox(height: 10),
+//               Text('Quantity'),
+//               TextFormField(
+//                 controller: quantityController,
+//                 keyboardType: TextInputType.number,
+//               ),
+//             ],
+//           ),
+//           actions: [
+//             TextButton(
+//               child: Text('Cancel'),
+//               onPressed: () => Navigator.of(context).pop(),
+//             ),
+//             TextButton(
+//               child: Text('Save'),
+//               onPressed: () async {
+//                 final String name = nameController.text.trim();
+//                 final int quantity =
+//                     int.tryParse(quantityController.text.trim()) ?? 0;
+
+//                 if (name.isNotEmpty && quantity > 0) {
+//                   await FirebaseFirestore.instance
+//                       .collection('wareHouseItem')
+//                       .doc(item.id)
+//                       .update({
+//                     'name': name,
+//                     'quantity': quantity,
+//                     'lastUpdated': Timestamp.now(),
+//                   });
+//                   Navigator.of(context).pop();
+//                 }
+//               },
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+
+//   void _showDeleteItemDialog(String id) {
+//     showDialog(
+//       context: context,
+//       builder: (BuildContext context) {
+//         return AlertDialog(
+//           title: Text('Delete Item'),
+//           content: Text('Are you sure you want to delete this item?'),
+//           actions: [
+//             TextButton(
+//               child: Text('Cancel'),
+//               onPressed: () {
+//                 Navigator.pop(context);
+//               },
+//             ),
+//             TextButton(
+//               child: Text('Delete'),
+//               onPressed: () {
+//                 itemsRef.doc(id).delete();
+//                 Navigator.pop(context);
+//               },
+//             ),
+//           ],
 //         );
 //       },
 //     );
@@ -95,16 +181,60 @@
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Inventory'),
-//       ),
-//       body: ListView.builder(
-//         itemCount: items.length,
-//         itemBuilder: (context, index) {
-//           return ListTile(
-//             title: Text(items[index].itemName),
-//             subtitle: Text(
-//                 'Last Updated: ${items[index].lastUpdated} Quantity: ${items[index].quantity}'),
+//       body: StreamBuilder<QuerySnapshot>(
+//         stream: itemsRef.snapshots(),
+//         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+//           if (snapshot.hasError) {
+//             return Text('Error: ${snapshot.error}');
+//           }
+
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return CircularProgressIndicator();
+//           }
+
+//           final List<Item> items = snapshot.data!.docs
+//               .map((doc) => Item(
+//                     doc['id'],
+//                     doc['name'],
+//                     doc['quantity'],
+//                     doc['lastUpdated'],
+//                   ))
+//               .toList();
+
+//           return ListView.builder(
+//             itemCount: items.length,
+//             itemBuilder: (BuildContext context, int index) {
+//               final Item item = items[index];
+
+//               return Card(
+//                 key: Key(item.id), // add a unique key for each card
+//                 child: ListTile(
+//                   title: Text(item.name),
+//                   subtitle: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Text('Quantity: ${item.quantity}'),
+//                       Text('Last updated: ${item.formattedDate}'),
+//                     ],
+//                   ),
+//                   trailing: Row(
+//                     mainAxisSize: MainAxisSize.min,
+//                     children: [
+//                       IconButton(
+//                         icon: Icon(Icons.delete),
+//                         onPressed: () {
+//                           _showDeleteItemDialog(item.id);
+//                         },
+//                       ),
+//                       IconButton(
+//                         icon: Icon(Icons.edit),
+//                         onPressed: () => _showEditItemDialog(item),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               );
+//             },
 //           );
 //         },
 //       ),
@@ -112,12 +242,38 @@
 //         onPressed: _showAddItemDialog,
 //         child: Icon(Icons.add),
 //       ),
+//       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 //     );
 //   }
 // }
+// ==============================================================
 
 import 'package:flutter/material.dart';
-import 'package:invsync/models/inventoryItem.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+
+class Item {
+  final String id;
+  final String name;
+  final int quantity;
+  final Timestamp lastUpdated;
+
+  Item(this.id, this.name, this.quantity, this.lastUpdated);
+
+  String get formattedDate {
+    return DateFormat('MMM d, y h:mm a').format(lastUpdated.toDate());
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'quantity': quantity,
+      'lastUpdated': lastUpdated,
+    };
+  }
+}
 
 class InventoryScreen extends StatefulWidget {
   const InventoryScreen({Key? key}) : super(key: key);
@@ -127,116 +283,233 @@ class InventoryScreen extends StatefulWidget {
 }
 
 class _InventoryScreenState extends State<InventoryScreen> {
-  List<InventoryItem> items = [
-    InventoryItem(
-        id: "asifialshvsf",
-        itemName: "Wheat",
-        lastUpdated: "kjewifwife",
-        quantity: 350),
-    InventoryItem(
-        id: "asifialshvsf",
-        itemName: "Bananas",
-        lastUpdated: "kjewifwife",
-        quantity: 100),
-    InventoryItem(
-        id: "asifialshvsf",
-        itemName: "Apples",
-        lastUpdated: "kjewifwife",
-        quantity: 50),
-    InventoryItem(
-        id: "asifialshvsf",
-        itemName: "Grapes",
-        lastUpdated: "kjewifwife",
-        quantity: 75),
-    InventoryItem(
-        id: "asifialshvsf",
-        itemName: "Oranges",
-        lastUpdated: "kjewifwife",
-        quantity: 25),
-  ];
-
-  InventoryItem? selectedItem;
-  int totalSpace = 1000;
-  int usedSpace = 0;
-
-  void addItem(String itemName, int quantity) {
-    setState(() {
-      items.add(InventoryItem(
-          id: "newid",
-          itemName: itemName,
-          lastUpdated: DateTime.now().toString(),
-          quantity: quantity));
-      usedSpace += quantity;
-    });
-    Navigator.pop(context);
-  }
+  final CollectionReference itemsRef =
+      FirebaseFirestore.instance.collection('wareHouseItem');
 
   void _showAddItemDialog() {
-    TextEditingController itemNameController = TextEditingController();
-    TextEditingController quantityController = TextEditingController();
+    String? name;
+    int? quantity;
 
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return SizedBox(
-            height: 250,
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add Item'),
+          content: SingleChildScrollView(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const SizedBox(height: 20),
-                const Text(
-                  'Add Item',
-                  style: TextStyle(fontSize: 18.0),
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: TextField(
-                    controller: itemNameController,
-                    decoration:
-                        const InputDecoration(hintText: 'Enter item name'),
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Name',
                   ),
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: TextField(
-                    controller: quantityController,
-                    decoration:
-                        const InputDecoration(hintText: 'Enter quantity'),
-                    keyboardType: TextInputType.number,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    if (itemNameController.text.isNotEmpty &&
-                        quantityController.text.isNotEmpty) {
-                      addItem(itemNameController.text,
-                          int.parse(quantityController.text));
-                      itemNameController.clear();
-                      quantityController.clear();
-                    }
+                  onChanged: (value) {
+                    name = value;
                   },
-                  child: const Text('Add'),
+                ),
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Quantity',
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    quantity = int.tryParse(value);
+                  },
                 ),
               ],
             ),
-          );
-        });
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (name != null && quantity != null) {
+                  final newItem = Item(DateTime.now().toString(), name!,
+                      quantity!, Timestamp.now());
+                  await itemsRef.doc(newItem.id).set(newItem.toMap());
+                  Navigator.pop(context);
+                }
+              },
+              child: Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showEditItemDialog(Item item) async {
+    final TextEditingController nameController =
+        TextEditingController(text: item.name);
+    final TextEditingController quantityController =
+        TextEditingController(text: item.quantity.toString());
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Item'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Name'),
+              TextFormField(
+                controller: nameController,
+              ),
+              SizedBox(height: 10),
+              Text('Quantity'),
+              TextFormField(
+                controller: quantityController,
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: Text('Save'),
+              onPressed: () async {
+                final String name = nameController.text.trim();
+                final int quantity =
+                    int.tryParse(quantityController.text.trim()) ?? 0;
+
+                if (name.isNotEmpty && quantity > 0) {
+                  await FirebaseFirestore.instance
+                      .collection('wareHouseItem')
+                      .doc(item.id)
+                      .update({
+                    'name': name,
+                    'quantity': quantity,
+                    'lastUpdated': Timestamp.now(),
+                  });
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteItemDialog(String id) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Item'),
+          content: Text('Are you sure you want to delete this item?'),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () {
+                itemsRef.doc(id).delete();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    int availableSpace = totalSpace - usedSpace;
-    return ListView.builder(
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(items[index].itemName),
-          subtitle: Text(
-              'Last Updated: ${items[index].lastUpdated} Quantity: ${items[index].quantity}'),
-        );
-      },
+    return Scaffold(
+      body: StreamBuilder<QuerySnapshot>(
+        stream: itemsRef.snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
+
+          final List<Item> items = snapshot.data!.docs
+              .map((doc) => Item(
+                    doc['id'],
+                    doc['name'],
+                    doc['quantity'],
+                    doc['lastUpdated'],
+                  ))
+              .toList();
+
+          return ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (BuildContext context, int index) {
+              final Item item = items[index];
+
+              return Slidable(
+                key: Key(item.id),
+                startActionPane: ActionPane(
+                  motion: const DrawerMotion(),
+                  extentRatio: 0.5,
+                  children: [
+                    SlidableAction(
+                      label: 'Update',
+                      backgroundColor: Colors.blue.shade100,
+                      icon: Icons.edit,
+                      onPressed: (context) => _showEditItemDialog(item),
+                    ),
+                    SlidableAction(
+                      label: 'More',
+                      backgroundColor: Colors.blue.shade300,
+                      icon: Icons.more_vert,
+                      onPressed: (context) => _showEditItemDialog(item),
+                    ),
+                  ],
+                ),
+                endActionPane: ActionPane(
+                  extentRatio: 0.25,
+                  motion: const DrawerMotion(),
+                  children: [
+                    SlidableAction(
+                      label: 'Delete',
+                      backgroundColor: Colors.red.shade900,
+                      icon: Icons.delete,
+                      onPressed: (context) => _showDeleteItemDialog(item.id),
+                    ),
+                  ],
+                ), child: Card(
+                  key: Key(item.id),
+                  child: ListTile(
+                    title: Text(item.name),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Quantity : ${item.quantity} tons'),
+                        Text('Last Updated : ${item.formattedDate}'),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddItemDialog,
+        child: Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
