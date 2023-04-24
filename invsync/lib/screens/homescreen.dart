@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:invsync/screens/homepage.dart';
 import 'package:invsync/screens/inventory.dart';
+import 'package:invsync/screens/loginPage.dart';
 import 'package:invsync/screens/profile.dart';
 
 class DrawerItem {
@@ -11,9 +13,10 @@ class DrawerItem {
 
 class HomeScreen extends StatefulWidget {
   final drawerItems = [
-    DrawerItem("Home", Icons.home),
+    DrawerItem("Dashboard", Icons.home),
     DrawerItem("Inventory", Icons.warehouse),
-    DrawerItem("Profile", Icons.account_circle)
+    DrawerItem("Profile", Icons.account_circle),
+    DrawerItem("Logout", Icons.logout)
   ];
 
   HomeScreen({super.key});
@@ -35,10 +38,29 @@ class HomeScreenState extends State<HomeScreen> {
         return const InventoryScreen();
       case 2:
         return const MyProfilePage();
-
+      case 3:
+        return FutureBuilder(
+          future: logOut(),
+          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // Return a loading indicator while logging out
+              return CircularProgressIndicator();
+            } else {
+              // Navigate to LoginPage once logged out
+              return LoginPage();
+            }
+          },
+        );
       default:
         return const Text("Error");
     }
+  }
+
+  logOut() async {
+    await Hive.box('userBox').put('isLoggedIn', false);
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginPage()));
   }
 
   _onSelectItem(int index) {
