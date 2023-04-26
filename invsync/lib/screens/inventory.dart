@@ -156,7 +156,10 @@ class _InventoryScreenState extends State<InventoryScreen> {
                     'quantity': quantity,
                     'lastUpdated': Timestamp.now(),
                   });
-                  Navigator.of(context).pop(); // close the dialog box
+                  Navigator.of(context).pop();
+
+                  // await Future.delayed(Duration(milliseconds: 500));
+                  // close the dialog box
                 }
               },
             ),
