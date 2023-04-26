@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MyProfilePage extends StatefulWidget {
@@ -10,8 +11,40 @@ class MyProfilePage extends StatefulWidget {
 class _MyProfilePageState extends State<MyProfilePage> {
   bool showlogo = false;
 
+  String _username = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _getUsername();
+  }
+
+  Future<void> _getUsername() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final email = user.email!;
+      final index = email.indexOf('@');
+      if (index != -1) {
+        setState(() {
+          _username = email.substring(0, index);
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    User? _currentUser = _auth.currentUser;
+    // String useremail;
+    // late String username;
+    // _auth.authStateChanges().listen((user) {
+    //   setState(() {
+    //     _currentUser = user;
+    //     useremail = _currentUser?.email ?? 'johndoe@gmail.com';
+    //     username = useremail.substring(0, useremail.indexOf('@'));
+    //   });
+    // });
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -22,22 +55,20 @@ class _MyProfilePageState extends State<MyProfilePage> {
             ),
             const Center(
               child: CircleAvatar(
-                radius: 72,
-                backgroundImage: NetworkImage(
-                    "https://avatars.githubusercontent.com/u/88235295?v=4"),
-              ),
+                  radius: 72,
+                  backgroundImage: AssetImage('assets/images/7309687.jpg')),
             ),
             const SizedBox(
               height: 16,
             ),
-            const ListTile(
+            ListTile(
               leading: Icon(Icons.person),
               title: Text(
                 "Name",
                 textScaleFactor: 0.95,
               ),
               subtitle: Text(
-                "Tushar Padhy",
+                "${_username}",
                 textScaleFactor: 1.1,
               ),
             ),
@@ -63,17 +94,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 textScaleFactor: 1.1,
               ),
             ),
-            const ListTile(
-              leading: Icon(Icons.email),
-              title: Text(
-                "Email",
-                textScaleFactor: 0.95,
-              ),
-              subtitle: Text(
-                "padhytushar4303@gmail.com",
-                textScaleFactor: 1.1,
-              ),
-            ),
+            ListTile(
+                leading: const Icon(Icons.email),
+                title: const Text(
+                  "Email",
+                  textScaleFactor: 0.95,
+                ),
+                subtitle: Text(_currentUser?.email ?? 'johndoe@gmail.com')),
             if (showlogo)
               Padding(
                 padding: const EdgeInsets.all(16.0),

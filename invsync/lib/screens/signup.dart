@@ -198,6 +198,7 @@ class __FormContentState extends State<_FormContent> {
             _gap(),
             TextFormField(
               controller: emailController,
+              keyboardType: TextInputType.emailAddress,
               style: const TextStyle(fontSize: 16),
               validator: (value) {
                 // add email validation

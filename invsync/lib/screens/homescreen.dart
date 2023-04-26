@@ -13,13 +13,6 @@ class DrawerItem {
 }
 
 class HomeScreen extends StatefulWidget {
-  final drawerItems = [
-    DrawerItem("Dashboard", Icons.home),
-    DrawerItem("Inventory", Icons.warehouse),
-    DrawerItem("Profile", Icons.account_circle),
-    DrawerItem("Logout", Icons.logout)
-  ];
-
   HomeScreen({super.key});
 
   @override
@@ -29,6 +22,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
+  final drawerItems = [
+    DrawerItem("Dashboard", Icons.home),
+    DrawerItem("Inventory", Icons.warehouse),
+    DrawerItem("Profile", Icons.account_circle),
+    DrawerItem("Logout", Icons.logout)
+  ];
+
   int _selectedDrawerIndex = 0;
 
   _getDrawerItemWidget(int pos) {
@@ -71,16 +71,14 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var drawerOptions = <Widget>[];
-    for (var i = 0; i < widget.drawerItems.length; i++) {
-      var d = widget.drawerItems[i];
-      drawerOptions.add(ListTile(
-        leading: Icon(d.icon),
-        title: Text(d.title),
-        selected: i == _selectedDrawerIndex,
-        onTap: () => _onSelectItem(i),
-      ));
-    }
+    var drawerOptions = drawerItems
+        .map((d) => ListTile(
+              leading: Icon(d.icon),
+              title: Text(d.title),
+              selected: drawerItems.indexOf(d) == _selectedDrawerIndex,
+              onTap: () => _onSelectItem(drawerItems.indexOf(d)),
+            ))
+        .toList();
 
     final FirebaseAuth _auth = FirebaseAuth.instance;
     User? _currentUser = _auth.currentUser;
@@ -94,15 +92,20 @@ class HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         // here we display the title corresponding to the fragment
         // you can instead choose to have a static title
-        title: Text(widget.drawerItems[_selectedDrawerIndex].title),
+        title: Text(drawerItems[_selectedDrawerIndex].title),
       ),
       drawer: Drawer(
         child: Column(
           children: <Widget>[
             UserAccountsDrawerHeader(
-                accountName: Text("John Doe"),
+                accountName: null,
                 accountEmail: Text(_currentUser?.email ?? 'johndoe@gmail.com')),
-            Column(children: drawerOptions)
+            Expanded(
+              child: ListView.builder(
+                itemCount: drawerOptions.length,
+                itemBuilder: (context, index) => drawerOptions[index],
+              ),
+            ),
           ],
         ),
       ),
